@@ -48,3 +48,32 @@ fs.readFile('./input.txt', (err, rawData) => {
     const secretMessage = arrangedContainers.map(container => container[container.length - 1]).join('')
     console.log("Part 1 Result:", secretMessage)  // VRWBSFZWM
 });
+
+// Part 2
+const applyStepWithMoveMultiple = (containers: Array<Array<string>>, step: string): Array<Array<string>> => {
+    const splittedStep = step.split(' ');
+    const numOfCrates = Number(splittedStep[1]);
+    const cratesFromContainers = Number(splittedStep[3]) - 1; // -1 for index
+    const cratesToContainers = Number(splittedStep[5]) - 1; // -1 for index
+
+    const item = containers[cratesFromContainers].splice(containers[cratesFromContainers].length - numOfCrates, numOfCrates);
+    containers[cratesToContainers] = containers[cratesToContainers].concat(item);
+
+    return containers
+};
+
+fs.readFile('./input.txt', (err, rawData) => {
+    const data = rawData.toString().split('\n');
+
+    const findSplitIndex = data.findIndex(line => line === '');
+    const containers = data.slice(0, findSplitIndex - 1); // -1 for the index number line
+    const steps = data.slice(findSplitIndex + 1, data.length); // +1 for the empty line
+
+    const arrangedContainers = arrangeContainers(containers);
+
+    steps.forEach(step => {
+        step !== '' && applyStepWithMoveMultiple(arrangedContainers, step)
+    })
+    const secretMessage = arrangedContainers.map(container => container[container.length - 1]).join('')
+    console.log("Part 2 Result:", secretMessage)  // RBTWJWMC
+});
